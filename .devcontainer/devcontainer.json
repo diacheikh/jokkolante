@@ -1,0 +1,18 @@
+{
+  //"image":"mcr.microsoft.com/devcontainers/universal:2",
+  "name": "Spring Boot & PostgreSQL",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "ms-azuretools.vscode-docker",
+        "rangav.vscode-thunder-client"
+      ]
+    }
+  },
+  "forwardPorts": [8081, 5432],
+  "postCreateCommand": "mvn clean compile"
+}
