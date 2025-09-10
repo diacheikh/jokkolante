@@ -3,7 +3,9 @@ package com.cdcdevtools.jookolante.web.dto;
 // UserResponseDTO.java (pour les réponses sans mot de passe)
 import com.cdcdevtools.jookolante.domain.enums.UserRole;
 import lombok.Data;
+
 import java.time.LocalDateTime;
+
 
 @Data
 public class UserResponseDTO {

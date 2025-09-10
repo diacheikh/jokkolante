@@ -1,15 +1,10 @@
-version: '3.8'
-
 services:
   app:
     build: .
     ports:
-      - "8081:8081"
+      - "8082:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/jokkolante_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
     depends_on:
       db:
         condition: service_healthy
@@ -19,28 +14,17 @@ services:
     image: postgres:15-alpine
     environment:
       - POSTGRES_DB=jokkolante_db
-      - POSTGRES_USER=postgres
+      - POSTGRES_USER=postgresc
       - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d jokkolante_db || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: unless-stopped
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - db
     restart: unless-stopped
 
 volumes:

@@ -2,7 +2,6 @@ package com.cdcdevtools.jookolante.web.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
-
 @Data
 public class AssociationResponseDTO {
     private Long id;
