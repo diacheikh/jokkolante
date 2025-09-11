@@ -1,9 +1,13 @@
 package com.cdcdevtools.jookolante.web.dto;
 
 import com.cdcdevtools.jookolante.domain.enums.ZoneLevel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class ZoneDTO {
     private Long id;
     private String name;

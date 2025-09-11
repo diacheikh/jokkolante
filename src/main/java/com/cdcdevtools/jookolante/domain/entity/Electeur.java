@@ -26,8 +26,8 @@ public class Electeur {
     @Column(name = "nin", unique = true, precision = 13)
     private Long nin;
     
-    @Column(name = "voter_number", unique = true, precision = 9)
-    private Long voterNumber;
+    @Column(name = "number_electeur", unique = true, precision = 9)
+    private Long electeurnumber;
     
     @Column(name = "email", length = 100)
     private String email;
