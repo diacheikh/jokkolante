@@ -14,42 +14,48 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(name = "last_name", nullable = false, length = 30)
     private String lastName;
-    
+
     @Column(name = "first_name", nullable = false, length = 40)
     private String firstName;
-    
-    @Column(name = "nin", unique = true, precision = 13)
-    private Long nin;
-    
-    @Column(name = "voter_number", unique = true, precision = 9)
-    private Long voterNumber;
-    
+
     @Column(name = "email", length = 100)
     private String email;
-    
+
     @Column(name = "phone", length = 20)
     private String phone;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, length = 20)
+
+
+    @Column(name = "nin", unique = true)
+    private Long nin;
+
+    @Column(name = "is_voter", nullable = false)
+    private Boolean isVoter = false;
+
+    @Column(name = "membership_date")
+    private LocalDate membershipDate;
+
+    @Column(name = "membership_expiration")
+    private LocalDate membershipExpiration;
+
     private MemberType type;
-    
+
     @ManyToOne
     @JoinColumn(name = "association_id", nullable = false)
     private Association association;
-    
-    @Column(name = "is_voter")
-    private Boolean isVoter = false;
-    
-    @Column(name = "membership_date")
-    private LocalDate membershipDate;
-    
-    @Column(name = "membership_expiration")
-    private LocalDate membershipExpiration;
+
+    @ManyToOne
+    @JoinColumn(name = "zone_id", nullable = false)
+
+    private Zone zone;
+
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Electeur electeur;
 }

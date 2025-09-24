@@ -1,10 +1,8 @@
 package com.cdcdevtools.jookolante.domain.entity;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import com.cdcdevtools.jookolante.domain.enums.ZoneLevel;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,31 +11,35 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Zone {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "name", nullable = false, length = 100)
-    private String name;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "level", nullable = false, length = 20)
-    private ZoneLevel level;
-    
-    @Column(name = "code", length = 10)
+
+    @Column(nullable = false, unique = true)
     private String code;
-    
-    @ManyToOne
-    @JoinColumn(name = "parent_zone_id")
+
+    @Column(nullable = false)
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ZoneLevel level;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_zone_id", nullable = true)
     private Zone parentZone;
-    
-    @OneToMany(mappedBy = "parentZone")
+
+    @OneToMany(mappedBy = "parentZone", cascade = CascadeType.ALL)
     private List<Zone> childZones;
-    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responsible_id", nullable = true) // ✅ Nouveau champ
+    private User responsible;
+
     @OneToMany(mappedBy = "zone")
     private List<Association> associations;
-    
-    @OneToMany(mappedBy = "zone")
-    private List<User> administrators;
 }

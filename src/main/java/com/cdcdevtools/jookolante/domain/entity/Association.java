@@ -1,9 +1,7 @@
 package com.cdcdevtools.jookolante.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -14,44 +12,44 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Association {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "name", nullable = false, length = 100)
+
+    @Column(nullable = false, length = 100)
     private String name;
-    
-    @Column(name = "description", length = 200)
+
+    @Column(length = 200)
     private String description;
-    
-    @Column(name = "address", length = 100)
+
+    @Column(length = 100)
     private String address;
-    
-    @Column(name = "contact_email", length = 50)
+
+    @Column(length = 100)
     private String contactEmail;
-    
-    @Column(name = "contact_phone", length = 20)
+
+    @Column(length = 20)
     private String contactPhone;
-    
-    @ManyToOne
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean active = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zone_id", nullable = false)
     private Zone zone;
-    
-    @OneToOne
-    @JoinColumn(name = "manager_id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id", nullable = false)
     private User manager;
-    
-    @OneToMany(mappedBy = "association")
-    private List<Member> members;
-    
-    @OneToMany(mappedBy = "association")
-    private List<Event> events;
-    
-    @Column(name = "is_active")
-    private Boolean active = true;
-    
+
+    @OneToMany(mappedBy = "association", cascade = CascadeType.ALL)
+    private List<User> members;
+
     @CreationTimestamp
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

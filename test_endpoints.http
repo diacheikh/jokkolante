@@ -1,0 +1,19 @@
+### Test GET members
+GET http://localhost:8081/members
+Accept: application/json
+
+### Test GET member par id
+GET http://localhost:8081/members/1
+Accept: application/json
+
+### Test POST member
+POST http://localhost:8081/members
+Content-Type: application/json
+
+{
+  "nin": "12345678AB",
+  "voterNumber": "VN00123",
+  "associationId": 1,
+  "zoneId": 2,
+  "otherField": "valeur"
+}

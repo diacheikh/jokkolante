@@ -6,12 +6,20 @@ import com.cdcdevtools.jookolante.domain.entity.Zone;
 import com.cdcdevtools.jookolante.repository.AssociationRepository;
 import com.cdcdevtools.jookolante.repository.UserRepository;
 import com.cdcdevtools.jookolante.repository.ZoneRepository;
+import com.cdcdevtools.jookolante.security.UserDetailsImpl;
+import com.cdcdevtools.jookolante.security.jwt.JwtUtil;
 import com.cdcdevtools.jookolante.web.dto.AssociationDTO;
 import com.cdcdevtools.jookolante.web.dto.AssociationResponseDTO;
 import com.cdcdevtools.jookolante.web.mapper.AssociationMapper;
 import com.cdcdevtools.jookolante.exception.ResourceNotFoundException;
 import com.cdcdevtools.jookolante.exception.DuplicateResourceException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,8 +87,8 @@ public class AssociationService {
         }
 
         // Vérifier et mettre à jour le manager
-        if (associationDTO.getManagerId() != null && 
-            (existingAssociation.getManager() == null || 
+        if (associationDTO.getManagerId() != null &&
+            (existingAssociation.getManager() == null ||
              !existingAssociation.getManager().getId().equals(associationDTO.getManagerId()))) {
             User manager = userRepository.findById(associationDTO.getManagerId())
                     .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", associationDTO.getManagerId()));
@@ -109,5 +117,44 @@ public class AssociationService {
         Association association = associationRepository.findByManagerId(managerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Association", "managerId", managerId.toString()));
         return associationMapper.toResponseDTO(association);
+    }
+    public List<AssociationResponseDTO> getAssociationsForUser(User user) {
+        return associationRepository.findByManagerId(user.getId()).stream()
+                .map(associationMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public boolean canUserManageAssociation(Long associationId, Long userId) {
+        return associationRepository.findById(associationId)
+                .map(a -> a.getManager() != null && a.getManager().getId().equals(userId))
+                .orElse(false);
+    }
+
+    public List<Association> getAssociationsForCurrentUser() {
+        UserDetailsImpl currentUser = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Zone userZone = currentUser.getUser().getZone();
+        return associationRepository.findAllByZone(userZone);
+    }
+
+    @Service
+    public static class AuthService {
+
+        @Autowired
+        private AuthenticationManager authenticationManager;
+
+        @Autowired
+        private com.cdcdevtools.jookolante.security.service.CustomUserDetailsService userDetailsService;
+
+        @Autowired
+        private JwtUtil jwtUtil;
+
+        public String authenticate(String username, String password) {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            return jwtUtil.generateToken(userDetails);
+        }
     }
 }

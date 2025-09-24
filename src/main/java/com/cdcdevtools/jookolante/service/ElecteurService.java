@@ -1,6 +1,7 @@
 package com.cdcdevtools.jookolante.service;
 
 import com.cdcdevtools.jookolante.domain.entity.Electeur;
+import com.cdcdevtools.jookolante.domain.entity.Zone;
 import com.cdcdevtools.jookolante.repository.ElecteurRepository;
 import com.cdcdevtools.jookolante.repository.ZoneRepository;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,12 @@ public class ElecteurService {
         this.zoneRepository = zoneRepository;
     }
 
+    public void validateElecteurUniqueness(Long numberElecteur) {
+        if (repository.existsByNumberElecteur(numberElecteur)) {
+            throw new IllegalArgumentException("Ce numéro électeur est déjà attribué");
+        }
+    }
+
     public List<Electeur> findAll() {
         return repository.findAll();
     }
@@ -28,7 +35,9 @@ public class ElecteurService {
     }
 
     public Electeur save(Electeur electeur, Long zoneId) {
-        electeur.setZone(zoneRepository.findById(zoneId).orElseThrow());
+        Zone zone = zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new IllegalArgumentException("Zone introuvable"));
+        electeur.setZone(zone);
         return repository.save(electeur);
     }
 

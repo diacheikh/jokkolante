@@ -1,5 +1,6 @@
 package com.cdcdevtools.jookolante.web.controller;
 
+import com.cdcdevtools.jookolante.domain.entity.Association;
 import com.cdcdevtools.jookolante.web.dto.AssociationDTO;
 import com.cdcdevtools.jookolante.web.dto.AssociationResponseDTO;
 import com.cdcdevtools.jookolante.service.AssociationService;
@@ -7,13 +8,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/associations")
 @RequiredArgsConstructor
 public class AssociationController {
+
     private final AssociationService associationService;
 
     @PostMapping
@@ -23,10 +25,19 @@ public class AssociationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAssociation);
     }
 
-    @GetMapping
+    // Liste complète (réservée à ADMIN_GENERAL)
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN_GENERAL')")
     public ResponseEntity<List<AssociationResponseDTO>> getAllAssociations() {
         List<AssociationResponseDTO> associations = associationService.getAllAssociations();
         return ResponseEntity.ok(associations);
+    }
+
+    // Liste filtrée selon l’utilisateur connecté
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN_GENERAL', 'VILLAGE_ADMIN')")
+    public ResponseEntity<List<Association>> getAssociationsForCurrentUser() {
+        return ResponseEntity.ok(associationService.getAssociationsForCurrentUser());
     }
 
     @GetMapping("/{id}")

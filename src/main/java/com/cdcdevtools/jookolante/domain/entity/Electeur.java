@@ -13,41 +13,28 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class Electeur {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "last_name", nullable = false, length = 30)
-    private String lastName;
-    
-    @Column(name = "first_name", nullable = false, length = 40)
-    private String firstName;
-    
-    @Column(name = "nin", unique = true, precision = 13)
-    private Long nin;
-    
-    @Column(name = "number_electeur", unique = true, precision = 9)
-    private Long electeurnumber;
-    
-    @Column(name = "email", length = 100)
-    private String email;
-    
-    @Column(name = "phone", length = 20)
-    private String phone;
-    
-    @ManyToOne
-    @JoinColumn(name = "zone_id")
-    private Zone zone;
-    
-    @Column(name = "voting_bureau")
-    private Integer votingBureau;
-    
+
+    @OneToOne
+    @JoinColumn(name = "member_id", nullable = false, unique = true)
+    private Member member;
+
+    @Column(name = "number_electeur", unique = true)
+    private Long numberElecteur;
+
     @Column(name = "voting_place", length = 100)
     private String votingPlace;
-    
+
+    @Column(name = "voting_bureau")
+    private Integer votingBureau;
+
     @Column(name = "registration_date")
     private LocalDate registrationDate;
-    
-    @Column(name = "is_active")
-    private Boolean active = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zone_id", nullable = false)
+    private Zone zone; // ✅ Ajout de la zone électorale
 }

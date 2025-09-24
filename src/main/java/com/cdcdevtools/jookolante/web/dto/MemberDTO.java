@@ -1,9 +1,8 @@
 package com.cdcdevtools.jookolante.web.dto;
-
 import com.cdcdevtools.jookolante.domain.enums.MemberType;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -11,16 +10,19 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class MemberDTO {
-    private Long id;
-    private String lastName;
+
     private String firstName;
-    private Long nin;
-    private Long voterNumber;
+    private String lastName;
     private String email;
     private String phone;
     private MemberType type;
-    private Long associationId;
     private Boolean isVoter;
-    private LocalDate membershipDate;
-    private LocalDate membershipExpiration;
+    private Long associationId;
+    private Long zoneId;
+    private Long nin;
+    // Champs électeur conditionnels
+    private Long numberElecteur;
+    private String votingPlace;
+    private Integer votingBureau;
+    private LocalDate registrationDate;
 }

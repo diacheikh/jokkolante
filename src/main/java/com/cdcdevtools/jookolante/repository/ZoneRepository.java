@@ -11,4 +11,5 @@ public interface ZoneRepository extends JpaRepository<Zone, Long> {
     List<Zone> findByParentZoneId(Long parentId);
     List<Zone> findByNameContaining(String name);
     boolean existsByNameAndLevel(String name, ZoneLevel level);
+    List<Zone> findAllByParentZone(Zone zone);
 }
